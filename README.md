@@ -1,12 +1,14 @@
-# revfx template
-This is revfx template,  
+Squall Reverb
+for the Korg NTS-1 mkii,  
 can use as `REVERB EFFECTS`.
+
+AS of the latest commit, this effect is not functioning yet.
 
 # Parameters
 - shape (NTS-1 mkII: A)  
-Unused.
+TIME.
 - alt (NTS-1 mkII: B)  
-Unused.
+DEPTH.
 - shift depth  
 dry/wet mixing ratio.
 
@@ -16,8 +18,8 @@ dry/wet mixing ratio.
 1. See README.md under `platform/nts-1_mkii`.
 
 # LICENSE
-Copyright 2024 Tomoaki Itoh
+Revised and Compiled by Daniel Majid
+Original Clouds reverb by Olivier Gillet
+Logue SDK template from Tomoaki Itoh
 This software is released under the MIT License, see LICENSE.txt.
 
-# AUTHOR
-Tomoaki Itoh(neko) techno.cat.miau@gmail.com
