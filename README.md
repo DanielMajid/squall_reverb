@@ -17,22 +17,23 @@ In desired directory: </br>
 
 Download this repo</br>
 - clone this repo https://github.com/DanielMajid/squall_reverb.git
-- git submodule update --init</p>
+- git submodule update --init</br>
 
-Update logue sdk dependencies
+Update logue sdk dependencies</br>
 - cd logue-sdk
 - git submodule update --init
-- tools/gcc/get_gcc_osx.sh
+- tools/gcc/get_gcc_osx.sh</br>
 
-Run Make command to build binary
-- run "make install"
+Run Make command to build binary</p>
+- run "make install"</br>
 
-Open Korg Kontrol Editor
-Drag .nts1mkiiunit file into the appropriate module category
-Click sync
-Enjoy the reverberation!
+Load the unit
+- Open Korg Kontrol Editor
+- Drag .nts1mkiiunit file into the appropriate module category
+- Click sync</p>
+Enjoy the reverberation!</br>
 
-port by Daniel Majid Mirzakhani
-original Clouds DSP by Emilie Gillet
+Port by Daniel Majid Mirzakhani</p>
+Original Clouds DSP by Emilie Gillet</br>
 
 released under MIT license see license.txt for more information
