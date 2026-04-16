@@ -16,7 +16,7 @@ To build this project: </p>
 In desired directory: </br>
 
 Download this repo</br>
-- daf
+- clone this repo https://github.com/DanielMajid/squall_reverb.git
 - git submodule update --init</p>
 
 Update logue sdk dependencies
