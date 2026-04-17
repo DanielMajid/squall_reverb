@@ -1,12 +1,11 @@
 /*
- * File: cloudlogue-reverb.cpp
+ * File: cloudlogue-reverb.cc
  *
  * NTS-1 MKII Reverb Effect Implementation
  *
  * This file initializes the reverb effect, processes audio frames,
  * and handles parameter changes for the NTS-1 MKII platform.
  *
- * 2023 (c) Your Name
  *
  */
 

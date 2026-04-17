@@ -1,7 +1,7 @@
 # Build configuration for NTS-1 mkII user unit
 # Uses Make wildcards to auto-discover legacy source files in src/legacy/
 
-PROJECT := CLOUDSREMADE
+PROJECT := Squall
 PROJECT_TYPE := revfx
 
 # Auto-compile all C/C++ files in src/legacy/ to avoid manual config updates
