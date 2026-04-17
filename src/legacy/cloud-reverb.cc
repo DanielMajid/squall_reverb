@@ -1,5 +1,5 @@
 /*
- * File: cloudlogue-reverb.cc
+ * File: cloud-reverb.cc
  *
  * NTS-1 MKII Reverb Effect Implementation
  *
