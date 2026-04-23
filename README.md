@@ -16,8 +16,7 @@ To build this project: </p>
 In desired directory: </br>
 
 Download this repo</br>
-- git clone --recurse-submodules https://github.com/DanielMajid/squall_reverb.git
-- git submodule update --init</br>
+- git clone --recurse-submodules https://github.com/DanielMajid/squall_reverb.git</br>
 
 Download the ARM GCC toolchain</br>
 - cd logue-sdk/tools/gcc/
