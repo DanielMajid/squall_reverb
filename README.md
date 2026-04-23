@@ -16,13 +16,12 @@ To build this project: </p>
 In desired directory: </br>
 
 Download this repo</br>
-- clone this repo https://github.com/DanielMajid/squall_reverb.git
+- git clone --recurse-submodules https://github.com/DanielMajid/squall_reverb.git
 - git submodule update --init</br>
 
-Update logue sdk dependencies</br>
-- cd logue-sdk
-- git submodule update --init
-- tools/gcc/get_gcc_osx.sh</br>
+Download the ARM GCC toolchain</br>
+- cd logue-sdk/tools/gcc/
+- ./get_gcc_osx.sh</br>
 
 Run Make command to build binary</p>
 - run "make install"</br>
