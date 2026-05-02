@@ -2,9 +2,11 @@
 
 A port of Mutable Instruments Clouds reverb effect for the Korg NTS-1 mkii
 
-Knob A: time </br>
+Knob A: tone </br>
 Knob B: depth </br>
 Shift Menu : wet/dry control </p>
+
+tone knob controls a gentle LP filter on the reverb trails
 
 depth from 0 - 50% produces pleasant room/hall style reverb </br>
 depth from 50 - 75% gives lush cathedral style reverb with long tail and tails begin to feature slight modulation </br>
