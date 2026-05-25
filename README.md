@@ -1,39 +1,53 @@
-# Squall
+# Squall (NTS-1 mkII)
 
-A port of Mutable Instruments Clouds reverb effect for the Korg NTS-1 mkii
+`Squall` is a Clouds-inspired stereo reverb unit for the Korg NTS-1 mkII (`revfx` module).
 
-Knob A: tone </br>
-Knob B: depth </br>
-Shift Menu : wet/dry control </p>
+Ported by Daniel Majid Mirzakhani.
 
-tone knob controls a gentle LP filter on the reverb trails
+Original Clouds DSP copyright Emilie Gillet.
 
-depth from 0 - 50% produces pleasant room/hall style reverb </br>
-depth from 50 - 75% gives lush cathedral style reverb with long tail and tails begin to feature slight modulation </br>
-depth from 75 - 99% gives lengthy dreamy reverb with more recognizable tail modulation </br>
-depth at 100% creates near "infinite" tail </p>
+## Highlights
 
-To build this project: </p>
+- Clouds-style long-tail reverb behavior tuned for NTS-1 mkII revfx workflow.
+- Playable `DPTH` range from short ambience to near-infinite sustain tails.
+- Dedicated `MIX` dry/wet control on shift-knob path.
 
-In desired directory: </br>
+## Controls
 
-Download this repo</br>
-- git clone --recurse-submodules https://github.com/DanielMajid/squall_reverb.git</br>
+- `Knob A (TONE)`: Gentle low-pass control on reverb tails.
+- `Knob B (DPTH)`: Reverb amount/decay character.
+- `DELAY shift + Knob B (MIX)`: Dry/wet balance.
 
-Download the ARM GCC toolchain</br>
-- cd logue-sdk/tools/gcc/
-- ./get_gcc_osx.sh</br>
+`DPTH` behavior:
 
-Run Make command to build binary</p>
-- run "make install"</br>
+- `0-50%`: Room/hall style reverb.
+- `50-75%`: Longer cathedral-like tails with subtle modulation character.
+- `75-99%`: Very long dreamy tails with more obvious modulation in the decay.
+- `100%`: Near-infinite tail behavior.
 
-Load the unit
-- Open Korg Kontrol Editor
-- Drag .nts1mkiiunit file into the appropriate module category
-- Click sync</p>
-Enjoy the reverberation!</br>
+## To build this project
 
-Port by Daniel Majid Mirzakhani</p>
-Original Clouds DSP by Emilie Gillet</br>
+- Clone this repo 
+	In desired directory:
 
-released under MIT license see license.txt for more information
+	Download this repo
+
+	git clone --recurse-submodules https://github.com/DanielMajid/squall_reverb.git
+
+- Download the ARM GCC toolchain
+
+	cd logue-sdk/tools/gcc/
+	./get_gcc_osx.sh
+	Run Make command to build binary
+
+- Compile project
+	Run "make install"
+	Open Korg Kontrol Editor
+
+- Load Project
+	Drag .nts1mkiiunit file into the appropriate module category
+	Click sync
+
+## License
+
+Released under the MIT license. See `LICENSE.md`.

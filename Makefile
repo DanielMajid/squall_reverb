@@ -1,15 +1,11 @@
 PROJECT ?= Squall
 MODULE ?= revfx
-VERSION ?= 1.0.1
+VERSION ?= 1.0.2
 
 LOGUE_SDK_DIR ?= ./logue-sdk
 
 SDK_PLATFORM_DIR := $(LOGUE_SDK_DIR)/platform/nts-1_mkii
 SDK_TEMPLATE_MAKEFILE := $(SDK_PLATFORM_DIR)/$(if $(filter osc,$(MODULE)),dummy-osc,$(if $(filter modfx,$(MODULE)),dummy-modfx,$(if $(filter delfx,$(MODULE)),dummy-delfx,dummy-revfx)))/Makefile
-SDK_GCC_BIN_PATH := $(LOGUE_SDK_DIR)/tools/gcc/gcc-arm-none-eabi-10.3-2021.10/bin
-
-ARM_GCC := $(shell command -v arm-none-eabi-gcc 2>/dev/null)
-ARM_GCC_BIN_PATH := $(patsubst %/,%,$(dir $(ARM_GCC)))
 
 UNIT_FILE := $(PROJECT).nts1mkiiunit
 PACKAGE := $(PROJECT)-$(VERSION).zip
@@ -23,12 +19,6 @@ SDK_MAKE_ARGS := \
   CMSISDIR=$(LOGUE_SDK_DIR)/platform/ext/CMSIS/CMSIS \
   LDDIR=$(SDK_PLATFORM_DIR)/ld \
   INSTALLDIR=$(CURDIR)
-
-ifeq ($(wildcard $(SDK_GCC_BIN_PATH)/arm-none-eabi-gcc),)
-ifneq ($(ARM_GCC),)
-SDK_MAKE_ARGS += GCC_BIN_PATH=$(ARM_GCC_BIN_PATH)
-endif
-endif
 
 .PHONY: all install clean package check-sdk
 check-sdk:

@@ -6,7 +6,7 @@ const __unit_header unit_header_t unit_header = {
     .api = UNIT_API_VERSION,
     .dev_id = 0x4D616A69U,
     .unit_id = 0x00000001U,
-    .version = 0x00010010U,
+    .version = 0x00010002U,
     .name = "Squall",
     .num_params = 3,
 

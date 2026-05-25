@@ -6,7 +6,7 @@
 
 extern "C" {
 
-// Legacy ported code parameter enum.
+// DSP bridge parameter enum.
 enum {
   k_user_revfx_param_time = 0,
   k_user_revfx_param_depth,
@@ -51,8 +51,8 @@ inline int32_t drywet_to_shift_depth(const int32_t drywet) {
   return (clamped + 1000) * 1023 / 2000;
 }
 
-// Maps mkII parameter range [0, 1023] to legacy q31 range [0, 0x7FFFFFFF].
-// Use when forwarding to legacy code that calls q31_to_f32(value).
+// Maps mkII parameter range [0, 1023] to q31 range [0, 0x7FFFFFFF].
+// Use when forwarding to the processor bridge that calls q31_to_f32(value).
 inline int32_t legacy_param_to_q31(int32_t value) {
   const int32_t clamped = clipminmaxi32(0, value, 1023);
   return static_cast<int32_t>((static_cast<int64_t>(clamped) * 0x7FFFFFFFLL) / 1023);
@@ -95,7 +95,7 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t *desc) {
     _hook_set_buffer(buf);
   }
 
-  // Initialize legacy DSP code.
+  // Initialize DSP processor bridge.
   _hook_init(desc->target, desc->api);
 
   // Initialize parameters to their default values.
