@@ -1,6 +1,6 @@
 # Squall (NTS-1 mkII)
 
-`Squall` is a port of the Clouds eurorack module by Mutable Instruments.  
+`Squall` is a port of the reverb engine from the Clouds eurorack module by Mutable Instruments.  
 
 Ported as a stereo reverb unit for the Korg NTS-1 mkII (`revfx` module) by Daniel Majid Mirzakhani.
 
