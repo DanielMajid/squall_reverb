@@ -50,4 +50,4 @@ Original Clouds DSP copyright Emilie Gillet.
 
 ## License
 
-Released under the MIT license. See `LICENSE.md`.
+Released under the GPL3.0 license. See `LICENSE`.
