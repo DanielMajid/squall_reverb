@@ -1,6 +1,6 @@
 PROJECT ?= Squall
 MODULE ?= revfx
-VERSION ?= 1.0.2
+VERSION ?= 1.0.4
 
 LOGUE_SDK_DIR ?= ./logue-sdk
 

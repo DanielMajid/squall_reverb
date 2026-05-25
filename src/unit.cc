@@ -6,39 +6,27 @@
 
 extern "C" {
 
-// DSP bridge parameter enum.
+// Bridge parameter IDs consumed by _hook_param in clouds_reverb.cc.
+// Index 0 is named TONE in this project (SDK slot k_unit_revfx_fixed_param_time).
 enum {
-  k_user_revfx_param_time = 0,
+  k_user_revfx_param_tone = 0,
   k_user_revfx_param_depth,
   k_user_revfx_param_reserved0,
   k_user_revfx_param_shift_depth,
 };
 
-// Weak symbol hooks: override with legacy implementation to enable DSP.
-// If no override is provided, they are no-ops and the effect produces silence.
+// DSP bridge hooks implemented by src/clouds_reverb.cc.
+// Keep these as required symbols so mismatches fail at link time.
+void _hook_init(uint32_t platform, uint32_t api, uint32_t samplerate);
+void _hook_process(float *in_out, uint32_t frames);
+void _hook_suspend(void);
+void _hook_resume(void);
+void _hook_param(uint8_t index, int32_t value);
 
-__attribute__((weak)) void _hook_init(uint32_t platform, uint32_t api) {
-  (void)platform;
-  (void)api;
-}
-
-__attribute__((weak)) void _hook_process(float *in_out, uint32_t frames) {
-  (void)in_out;
-  (void)frames;
-}
-
-__attribute__((weak)) void _hook_suspend(void) {}
-__attribute__((weak)) void _hook_resume(void) {}
-
-__attribute__((weak)) void _hook_param(uint8_t index, int32_t value) {
-  (void)index;
-  (void)value;
-}
-
-// Buffer management hooks: legacy DSP reports required SDRAM words,
+// Buffer management hooks: DSP reports required SDRAM words,
 // then receives the runtime-allocated pointer via _hook_set_buffer.
-__attribute__((weak)) uint32_t _hook_buffer_size() { return 0; }
-__attribute__((weak)) void _hook_set_buffer(float* buf) { (void)buf; }
+uint32_t _hook_buffer_size();
+void _hook_set_buffer(float* buf);
 
 }  // extern "C"
 
@@ -47,6 +35,10 @@ namespace {
 int32_t cached_values[UNIT_REVFX_MAX_PARAM_COUNT] = {};
 
 inline int32_t drywet_to_shift_depth(const int32_t drywet) {
+  // Keep the MIX conversion in place for compatibility.
+  // MIX is not used right now because this emulates Clouds with
+  // one reverb knob (DEPTH / Knob B).
+  // Leaving this mapping in place keeps future wet/dry wiring simple.
   const int32_t clamped = clipminmaxi32(-1000, drywet, 1000);
   return (clamped + 1000) * 1023 / 2000;
 }
@@ -96,7 +88,7 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t *desc) {
   }
 
   // Initialize DSP processor bridge.
-  _hook_init(desc->target, desc->api);
+  _hook_init(desc->target, desc->api, desc->samplerate);
 
   // Initialize parameters to their default values.
   for (uint8_t index = 0; index < UNIT_REVFX_MAX_PARAM_COUNT; ++index) {
@@ -120,6 +112,7 @@ __unit_callback void unit_suspend() {
 }
 
 __unit_callback void unit_render(const float *in, float *out, uint32_t frames) {
+  // Process in-place on the output buffer so the bridge can mutate stereo frames.
   std::copy(in, in + (frames << 1), out);
   _hook_process(out, frames);
 }
@@ -134,7 +127,8 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value) {
 
   switch (id) {
   case k_unit_revfx_fixed_param_time:
-    _hook_param(k_user_revfx_param_time, legacy_param_to_q31(value));
+    // SDK fixed slot "time" is used as TONE for this effect.
+    _hook_param(k_user_revfx_param_tone, legacy_param_to_q31(value));
     break;
 
   case k_unit_revfx_fixed_param_depth:
@@ -142,6 +136,10 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value) {
     break;
 
   case k_unit_revfx_fixed_param_mix:
+    // MIX is still forwarded for compatibility.
+    // The DSP ignores it on purpose so the unit behaves like Clouds:
+    // one knob controls reverb wetness (DEPTH / Knob B).
+    // Reference target when wet/dry returns: Knob B = 100% ~= 54% wet / 46% dry.
     _hook_param(k_user_revfx_param_shift_depth, legacy_param_to_q31(drywet_to_shift_depth(value)));
     break;
 

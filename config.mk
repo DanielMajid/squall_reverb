@@ -15,7 +15,7 @@ UINCDIR = \
 ULIBS = -lm
 UDEFS =
 
-# Clouds DSP headers vendored with this project.
+# Clouds DSP headers provided by the eurorack submodule.
 UINCDIR += ./eurorack
 UINCDIR += ./eurorack/clouds/dsp
 UINCDIR += ./eurorack/clouds/dsp/fx
