@@ -6,7 +6,7 @@
  * This file owns runtime hook wiring, parameter forwarding, and delay-memory
  * handoff. DSP behavior is implemented in src/reverb.h.
  *
- * Clouds DSP Copyright (c) 2014 Emilie Gillet released under GPL3.0 License. See LICENSE.md for details.
+ * Clouds DSP Copyright (c) 2014 Emilie Gillet released under MIT License. See LICENSE for details.
  */
 
 #include "unit_revfx.h"
