@@ -51,16 +51,6 @@ inline int32_t drywet_to_shift_depth(const int32_t drywet) {
   return (clamped + 1000) * 1023 / 2000;
 }
 
-// The Clouds reverb amount also stretches decay time. Blend a mostly linear
-// response with a little quadratic taper so the lower half moves more while
-// the top of the knob still keeps extra resolution for the longest tails.
-inline int32_t depth_to_reverb_amount(const int32_t depth) {
-  const int32_t clamped = clipminmaxi32(0, depth, 1023);
-  const float normalized = static_cast<float>(clamped) / 1023.f;
-  const float curved = normalized * (0.65f + 0.35f * normalized);
-  return static_cast<int32_t>(curved * 1023.f + 0.5f);
-}
-
 // Maps mkII parameter range [0, 1023] to legacy q31 range [0, 0x7FFFFFFF].
 // Use when forwarding to legacy code that calls q31_to_f32(value).
 inline int32_t legacy_param_to_q31(int32_t value) {
@@ -148,7 +138,7 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value) {
     break;
 
   case k_unit_revfx_fixed_param_depth:
-    _hook_param(k_user_revfx_param_depth, legacy_param_to_q31(depth_to_reverb_amount(value)));
+    _hook_param(k_user_revfx_param_depth, legacy_param_to_q31(value));
     break;
 
   case k_unit_revfx_fixed_param_mix:
