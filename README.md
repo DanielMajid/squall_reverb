@@ -9,14 +9,13 @@ Original Clouds DSP copyright Emilie Gillet.
 ## Highlights
 
 - Clouds-style long-tail reverb behavior tuned for NTS-1 mkII revfx workflow.
-- Playable `DPTH` range from short ambience to near-infinite sustain tails.
-- Dedicated `MIX` dry/wet control on shift-knob path.
+- Playable `DPTH` range from short ambience to 'infinite' sustain tails. '**Knob b (DPTH)**' controls wet amount to closely emulate the 'one knob' functionality of the original Clouds module.
 
 ## Controls
 
 - `Knob A (TONE)`: Gentle low-pass control on reverb tails.
 - `Knob B (DPTH)`: Reverb amount/decay character.
-- `DELAY shift + Knob B (MIX)`: Dry/wet balance.
+- `DELAY shift + Knob B (MIX)`: Dry/wet balance is currently disabled.
 
 `DPTH` behavior:
 
