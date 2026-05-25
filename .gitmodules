@@ -4,6 +4,3 @@
 [submodule "eurorack"]
 	path = eurorack
 	url = https://github.com/DanielMajid/eurorack
-[submodule "force"]
-	path = force
-	url = https://github.com/DanielMajid/eurorack
