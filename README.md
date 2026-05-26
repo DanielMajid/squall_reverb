@@ -2,14 +2,15 @@
 
 `Squall` is a port of the reverb engine from the Clouds eurorack module by Mutable Instruments.  
 
-Ported as a stereo reverb unit for the Korg NTS-1 mkII (`revfx` module) by Daniel Majid Mirzakhani.
+Ported to the Korg NTS-1 mkII (`revfx` module) by Daniel Majid Mirzakhani.
 
 Original Clouds DSP copyright Emilie Gillet.
 
 ## Highlights
 
 - Clouds-style long-tail reverb behavior tuned for NTS-1 mkII revfx workflow.
-- Playable `DPTH` range  from short ambience to 'infinite' sustain tails. `Knob B (DPTH)` controls wet amount to closely emulate the 'one knob' functionality of the original Clouds module.
+- Playable `DPTH` range  from short ambience to extremely long sustain tails.
+- `Knob B (DPTH)` also controls wet amount to closely emulate the 'one knob' functionality of the original Clouds module. Standard wet/dry functionality is thereby disabled.
 
 ## Controls
 
@@ -22,7 +23,7 @@ Original Clouds DSP copyright Emilie Gillet.
 - `0-50%`: Room/hall style reverb.
 - `50-75%`: Longer cathedral-like tails with subtle modulation character.
 - `75-99%`: Very long dreamy tails with more obvious modulation in the decay.
-- `100%`: Near-infinite tail behavior.
+- `100%`: "infinite" tail behavior.
 
 ## To build this project
 
