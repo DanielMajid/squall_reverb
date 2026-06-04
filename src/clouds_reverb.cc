@@ -24,6 +24,8 @@ static clouds::Reverb241A2A9 s_processor_instance;
 static float* s_buffer = nullptr;
 static float s_reverb_amount = 0.f;
 static float s_tone = 1.f;
+static bool s_freeze = false;
+static float s_freeze_blend = 0.f;
 
 }  // namespace
 
@@ -43,21 +45,34 @@ void _hook_init(uint32_t platform, uint32_t api, uint32_t samplerate)
   // Keep runtime samplerate out of this path to preserve the Clouds voicing.
   (void)samplerate;
   s_processor_instance.Init(s_buffer);
+  s_reverb_amount = 0.f;
+  s_tone = 1.f;
+  s_freeze = false;
+  s_freeze_blend = 0.f;
 }
 
 void _hook_process(float *xn, uint32_t frames)
 {
-  // Keep behavior like Clouds: one reverb knob controls wet signal.
-  // Here, DEPTH (Knob B) drives the reverb amount inside the core.
-  // TONE controls the low-pass damping in the reverb network.
-  // No second wet/dry mix stage is applied after the core.
-  // At Knob B = 100%, amount = 0.54, which is about 54% wet / 46% dry.
-  // This keeps behavior close to the original one-knob Clouds feel.
-  s_processor_instance.set_amount(s_reverb_amount * 0.54f);
+  // Freeze behaves like a button: ON holds the current wash, OFF resumes
+  // normal feed into the network.
+  // Smooth transitions to avoid abrupt tonal or level jumps when toggling.
+  const float freeze_target = s_freeze ? 1.0f : 0.0f;
+  ONE_POLE(s_freeze_blend, freeze_target, 0.04f);
+
+  const float base_amount = s_reverb_amount * 0.54f;
+  const float base_time = 0.35f + 0.63f * s_reverb_amount;
+  const float base_lp = 0.6f + 0.37f * s_tone;
+
+  const float amount = base_amount + (1.0f - base_amount) * s_freeze_blend;
+  const float reverb_time = base_time;
+  const float input_gain = 0.2f * (1.0f - s_freeze_blend);
+  const float lp = base_lp + (0.95f - base_lp) * s_freeze_blend;
+
+  s_processor_instance.set_amount(amount);
   s_processor_instance.set_diffusion(0.7f);
-  s_processor_instance.set_time(0.35f + 0.63f * s_reverb_amount);
-  s_processor_instance.set_input_gain(0.2f);
-  s_processor_instance.set_lp(0.6f + 0.37f * s_tone);
+  s_processor_instance.set_time(reverb_time);
+  s_processor_instance.set_input_gain(input_gain);
+  s_processor_instance.set_lp(lp);
 
   clouds::FloatFrame* out = reinterpret_cast<clouds::FloatFrame*>(xn);
   s_processor_instance.Process(out, frames);
@@ -73,9 +88,8 @@ void _hook_param(uint8_t index, int32_t value)
   case 1:  // DEPTH (Knob B): maps to internal reverb amount.
     s_reverb_amount = value_f;
     break;
-  case 3:  // SHIFT-DEPTH / MIX is off on purpose.
-    // Reason: this matches the Clouds one-knob reverb behavior.
-    // A separate wet/dry control can be enabled in this file if needed.
+  case 3:  // FREEZE: button-like thresholded state.
+    s_freeze = value_f >= 0.5f;
     break;
   default:
     break;

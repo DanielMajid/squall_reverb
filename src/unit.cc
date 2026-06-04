@@ -11,9 +11,11 @@ extern "C" {
 enum {
   k_user_revfx_param_tone = 0,
   k_user_revfx_param_depth,
-  k_user_revfx_param_reserved0,
-  k_user_revfx_param_shift_depth,
+  k_user_revfx_param_mix_passthrough,
+  k_user_revfx_param_freeze,
 };
+
+constexpr uint8_t k_unit_revfx_param_freeze_slot = 3;
 
 // DSP bridge hooks implemented by src/clouds_reverb.cc.
 // Keep these as required symbols so mismatches fail at link time.
@@ -35,10 +37,7 @@ namespace {
 int32_t cached_values[UNIT_REVFX_MAX_PARAM_COUNT] = {};
 
 inline int32_t drywet_to_shift_depth(const int32_t drywet) {
-  // Keep the MIX conversion in place for compatibility.
-  // MIX is not used right now because this emulates Clouds with
-  // one reverb knob (DEPTH / Knob B).
-  // Leaving this mapping in place keeps future wet/dry wiring simple.
+  // Keep MIX conversion in place for compatibility.
   const int32_t clamped = clipminmaxi32(-1000, drywet, 1000);
   return (clamped + 1000) * 1023 / 2000;
 }
@@ -136,11 +135,16 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value) {
     break;
 
   case k_unit_revfx_fixed_param_mix:
-    // MIX is still forwarded for compatibility.
-    // The DSP ignores it on purpose so the unit behaves like Clouds:
-    // one knob controls reverb wetness (DEPTH / Knob B).
-    // Reference target when wet/dry returns: Knob B = 100% ~= 54% wet / 46% dry.
-    _hook_param(k_user_revfx_param_shift_depth, legacy_param_to_q31(drywet_to_shift_depth(value)));
+    // MIX remains in its original slot but is intentionally not used.
+    // Forward to a dedicated passthrough index so behavior stays explicit.
+    _hook_param(
+        k_user_revfx_param_mix_passthrough,
+        legacy_param_to_q31(drywet_to_shift_depth(value)));
+    break;
+
+  case k_unit_revfx_param_freeze_slot:
+    // FREEZE at the next available slot, mapped as a unipolar 0..1 control.
+    _hook_param(k_user_revfx_param_freeze, legacy_param_to_q31(value));
     break;
 
   default:

@@ -45,9 +45,16 @@ clean:
 package: install
 	@echo Packaging $(UNIT_FILE) -\> $(PACKAGE)
 	@rm -f "$(PACKAGE)"
-	@if [ -f src/credits.txt ]; then \
-	  zip -q9 "$(PACKAGE)" "$(UNIT_FILE)" src/credits.txt; \
-	else \
-	  zip -q9 "$(PACKAGE)" "$(UNIT_FILE)"; \
-	fi
+	@src_files="$$(find src -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.hpp' \) | sort)"; \
+	meta_files=""; \
+	for f in Makefile config.mk README.md LICENSE .gitmodules; do \
+	  if [ -f "$$f" ]; then \
+	    meta_files="$$meta_files $$f"; \
+	  fi; \
+	done; \
+	opt_files=""; \
+	if [ -f src/credits.txt ]; then \
+	  opt_files="$$opt_files src/credits.txt"; \
+	fi; \
+	zip -q9 "$(PACKAGE)" "$(UNIT_FILE)" $$src_files $$meta_files $$opt_files
 	@echo Done
