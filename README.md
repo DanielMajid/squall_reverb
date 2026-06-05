@@ -12,26 +12,19 @@ Original Clouds DSP copyright Émilie Gillet.
 - Playable `DPTH` range from short ambience to near-infinite sustain tails.
 - Knob B `DPTH` also controls wet amount to closely emulate the 'one knob' functionality of the original module.
 - `FREEZE` parameter emulates the freeze functionality from the original module.
-- `FTMBR` (slot 4) adds freeze timbre/hold control: loose playable hold at low values, true lock at high values.
+- `FTMBR` adds freeze timbre/hold control: loose playable hold at low values, true lock at high values.
 
 ## Controls
 
 - Knob A `TONE`: Gentle low-pass control on reverb tail.
 - Knob B `DPTH`: Reverb amount/decay character.
-- `DELAY` shift + Knob B `MIX`: Wet/dry mix is currently disabled.
-- `FREEZE`: Freezes the reverb buffer.
-- `FTMBR` (parameter slot 4): Freeze timbre/hold strength.
+- `MIX` Hold `REVERB` button + Knob B: Wet/dry mix is currently disabled.
+- `FREEZE` Hold `REVERB` button + Knob B: Freezes the reverb buffer.
+    - Knob B `< 50%`: FREEZE off (normal operation).
+    - Knob B `>= 50%`: FREEZE on .
+    - Existing tail content is held and remains playable with Knob B `FTMBR`.
+- `FTMBR` Freeze timbre/hold strength. Knob B `FTMBR` at low values will allow freeze to decay and allow in new audio to the buffer. Knob B `FTMBR` past 80% will lock buffer and disallow new audio to enter the buffer.
 
-`FREEZE` behavior:
-
-- `< 50%`: FREEZE off (normal operation).
-- `>= 50%`: FREEZE on .
-
-When FREEZE is engaged:
-
-- Existing tail content is held and remains playable with controls.
-- `FTMBR` low: loose hold with normal-to-high input reinjection for playable layering.
-- `FTMBR` high: input injection fades toward zero and the tail approaches true lock.
 
 `DPTH` behavior:
 
