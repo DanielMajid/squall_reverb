@@ -10,8 +10,9 @@ Original Clouds DSP copyright Émilie Gillet.
 
 - Uses DSP from the original Clouds synth module for an accurate emulation.
 - Playable `DPTH` range from short ambience to near-infinite sustain tails.
-- Knob B `DPTH` also controls wet amount to closely emulate the 'one knob' functionality of the original module. Standard wet/dry functionality is thereby disabled.
+- Knob B `DPTH` also controls wet amount to closely emulate the 'one knob' functionality of the original module.
 - `FREEZE` parameter emulates the freeze functionality from the original module.
+- `FTMBR` (slot 4) adds freeze timbre/hold control: loose playable hold at low values, true lock at high values.
 
 ## Controls
 
@@ -19,6 +20,7 @@ Original Clouds DSP copyright Émilie Gillet.
 - Knob B `DPTH`: Reverb amount/decay character.
 - `DELAY` shift + Knob B `MIX`: Wet/dry mix is currently disabled.
 - `FREEZE`: Freezes the reverb buffer.
+- `FTMBR` (parameter slot 4): Freeze timbre/hold strength.
 
 `FREEZE` behavior:
 
@@ -27,9 +29,9 @@ Original Clouds DSP copyright Émilie Gillet.
 
 When FREEZE is engaged:
 
-- New input stops exciting the reverb network.
-- Existing tail content is held/sustained and remains playable with controls.
-- Reverb amount is forced fully wet and damping shifts to keep the wash stable.
+- Existing tail content is held and remains playable with controls.
+- `FTMBR` low: loose hold with normal-to-high input reinjection for playable layering.
+- `FTMBR` high: input injection fades toward zero and the tail approaches true lock.
 
 `DPTH` behavior:
 
