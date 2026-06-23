@@ -6,7 +6,7 @@ const __unit_header unit_header_t unit_header = {
     .api = UNIT_API_VERSION,
     .dev_id = 0x4D616A69U,
     .unit_id = 0x00000001U,
-    .version = 0x00010120U,
+    .version = 0x00010140U,
     .name = "Squall",
     .num_params = 5,
 
@@ -17,10 +17,11 @@ const __unit_header unit_header_t unit_header = {
         {0, 1023, 0, 512, k_unit_param_type_none, 1, 0, 0, {"DPTH"}},
         // MIX stays in the fixed SDK slot for editor compatibility.
         {-1000, 1000, 0, 0, k_unit_param_type_drywet, 1, 1, 0, {"MIX"}},
-        // FREEZE lives in slot 3.
+        // FREEZE lives in slot 3 and defaults OFF.
         {0, 1023, 0, 0, k_unit_param_type_none, 1, 0, 0, {"FREEZE"}},
-        // FTMBR in slot 4 sets how loose or locked freeze feels.
-        {0, 1023, 0, 256, k_unit_param_type_none, 1, 0, 0, {"FTMBR"}},
+        // SCAN lives in slot 4 and defaults to 100%.
+        // SCAN controls freeze leak and colors frozen texture via LP/diffusion.
+        {0, 1023, 0, 1023, k_unit_param_type_none, 1, 0, 0, {"SCAN"}},
         {0, 0, 0, 0, k_unit_param_type_none, 0, 0, 0, {""}},
         {0, 0, 0, 0, k_unit_param_type_none, 0, 0, 0, {""}},
         {0, 0, 0, 0, k_unit_param_type_none, 0, 0, 0, {""}},

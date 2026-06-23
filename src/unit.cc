@@ -12,12 +12,12 @@ enum {
   k_user_revfx_param_depth,
   k_user_revfx_param_mix_passthrough,
   k_user_revfx_param_freeze,
-  k_user_revfx_param_freeze_timbre,
+  k_user_revfx_param_freeze_scan,
 };
 
 // Extra slots used by this unit beyond the fixed SDK parameters.
 constexpr uint8_t k_unit_revfx_param_freeze_slot = 3;
-constexpr uint8_t k_unit_revfx_param_freeze_timbre_slot = 4;
+constexpr uint8_t k_unit_revfx_param_freeze_scan_slot = 4;
 
 // DSP bridge hooks implemented in clouds_reverb.cc.
 void _hook_init(uint32_t platform, uint32_t api, uint32_t samplerate);
@@ -86,8 +86,9 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t *desc) {
   // Start DSP state.
   _hook_init(desc->target, desc->api, desc->samplerate);
 
-  // Push default parameter values through unit_set_param_value so
-  // clamping and conversion happen in one place.
+  // Push every init value through unit_set_param_value() so startup and
+  // live knob changes share exactly the same clamp + conversion path.
+  // This avoids surprises where defaults behave differently than edits.
   for (uint8_t index = 0; index < UNIT_REVFX_MAX_PARAM_COUNT; ++index) {
     s_cached_values[index] = static_cast<int32_t>(unit_header.params[index].init);
     unit_set_param_value(index, s_cached_values[index]);
@@ -144,9 +145,9 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value) {
     _hook_param(k_user_revfx_param_freeze, legacy_param_to_q31(value));
     break;
 
-  case k_unit_revfx_param_freeze_timbre_slot:
-    // FTMBR in slot 4.
-    _hook_param(k_user_revfx_param_freeze_timbre, legacy_param_to_q31(value));
+  case k_unit_revfx_param_freeze_scan_slot:
+    // SCAN in slot 4.
+    _hook_param(k_user_revfx_param_freeze_scan, legacy_param_to_q31(value));
     break;
 
   default:

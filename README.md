@@ -11,8 +11,8 @@ Original Clouds DSP copyright Émilie Gillet.
 - Uses DSP from the original Clouds synth module for an accurate emulation.
 - Playable `DPTH` range from short ambience to near-infinite sustain tails.
 - Knob B `DPTH` also controls wet amount to closely emulate the 'one knob' functionality of the original module.
-- `FREEZE` parameter emulates the freeze functionality from the original module.
-- `FTMBR` adds freeze timbre/hold control: loose playable hold at low values, true lock at high values.
+- `FREEZE` holds the reverb tail and limits fresh input.
+- `SCAN` shapes frozen texture and controls a small freeze leak range (0-5%).
 
 ## Controls
 
@@ -21,9 +21,11 @@ Original Clouds DSP copyright Émilie Gillet.
 - `MIX` Hold `REVERB` button + Knob B: Wet/dry mix is currently disabled.
 - `FREEZE` Hold `REVERB` button + Knob B: Freezes the reverb buffer.
     - Knob B `< 50%`: FREEZE off (normal operation).
-    - Knob B `>= 50%`: FREEZE on .
-    - Existing tail content is held and remains playable with Knob B `FTMBR`.
-- `FTMBR` Freeze timbre/hold strength. Knob B `FTMBR` at low values will allow freeze to decay and allow in new audio to the buffer. Knob B `FTMBR` past 80% will lock buffer and disallow new audio to enter the buffer.
+    - Knob B `>= 50%`: FREEZE on.
+    - Existing tail content is held.
+- `SCAN` Freeze behavior shaper.
+    - `100%`: Tightest hold (0% leak) and brightest/most diffuse freeze color.
+    - `0%`: Slight hold leak (up to 5%) and darker/less diffuse freeze color.
 
 
 `DPTH` behavior:
@@ -49,12 +51,12 @@ Original Clouds DSP copyright Émilie Gillet.
 	Run Make command to build binary
 
 - Compile project
-	Run "make install"
-	Open Korg Kontrol Editor
+    - Run `make install`.
+    - Open Korg Kontrol Editor.
 
 - Load Project
-	Drag .nts1mkiiunit file into the appropriate module category
-	Click sync
+    - Drag `.nts1mkiiunit` file into the appropriate module category.
+    - Click sync.
 
 ## License
 
