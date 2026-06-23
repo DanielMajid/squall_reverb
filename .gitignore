@@ -1,0 +1,27 @@
+# Build artifacts and binaries
+build/
+*.o
+*.elf
+*.hex
+*.bin
+*.dmp
+*.list
+*.map
+.dep/
+
+# Unit package
+*.nts1mkiiunit
+
+# Documentation artifacts
+Git_Push_Steps.pdf
+
+# Legacy/archive directories
+Squall-1.0.4/
+
+# IDE and system files
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
