@@ -47,6 +47,9 @@ class Reverb241A2A9 {
     engine_.SetLFOFrequency(LFO_2, 0.3f / 32000.0f);
     lp_ = 0.7f;
     diffusion_ = 0.625f;
+    // Initialize filter memory so first rendered tails are deterministic.
+    lp_decay_1_ = 0.0f;
+    lp_decay_2_ = 0.0f;
   }
 
   void Process(FloatFrame* in_out, size_t size) {
