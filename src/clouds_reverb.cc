@@ -128,6 +128,10 @@ void _hook_process(float* xn, uint32_t frames)
   // Keep time tied to hold so SCAN cannot directly "unfreeze" the tail.
   const float reverb_time = base_time + (1.0f - base_time) * freeze_hold;
 
+  // Normalize the frozen tail with a wet-only gain so freeze does not
+  // create a large jump in apparent level.
+  const float freeze_wet_gain = 1.0f - 0.30f * s_freeze_blend;
+
   const float input_gain = k_input_gain_base * input_scale;
   // SCAN colors the frozen texture by moving damping and diffusion.
   float lp = base_lp + (1.0f - base_lp) * freeze_hold;
@@ -142,6 +146,7 @@ void _hook_process(float* xn, uint32_t frames)
   s_processor_instance.set_time(reverb_time);
   s_processor_instance.set_input_gain(input_gain);
   s_processor_instance.set_lp(lp);
+  s_processor_instance.set_freeze_wet_gain(freeze_wet_gain);
 
   // Process in place: xn already contains interleaved stereo input samples.
   clouds::FloatFrame* out = reinterpret_cast<clouds::FloatFrame*>(xn);

@@ -47,6 +47,7 @@ class Reverb241A2A9 {
     engine_.SetLFOFrequency(LFO_2, 0.3f / 32000.0f);
     lp_ = 0.7f;
     diffusion_ = 0.625f;
+    freeze_wet_gain_ = 1.0f;
     // Initialize filter memory so first rendered tails are deterministic.
     lp_decay_1_ = 0.0f;
     lp_decay_2_ = 0.0f;
@@ -114,6 +115,7 @@ class Reverb241A2A9 {
       c.WriteAllPass(dap1b, -kap);
       c.Write(del1, 2.0f);
       c.Write(wet, 0.0f);
+      wet *= freeze_wet_gain_;
 
       in_out->l += (wet - in_out->l) * amount;
 
@@ -126,6 +128,7 @@ class Reverb241A2A9 {
       c.WriteAllPass(dap2b, kap);
       c.Write(del2, 2.0f);
       c.Write(wet, 0.0f);
+      wet *= freeze_wet_gain_;
 
       in_out->r += (wet - in_out->r) * amount;
 
@@ -156,6 +159,10 @@ class Reverb241A2A9 {
     lp_ = lp;
   }
 
+  inline void set_freeze_wet_gain(float freeze_wet_gain) {
+    freeze_wet_gain_ = freeze_wet_gain;
+  }
+
  private:
   typedef FxEngine<16384, FORMAT_32_BIT> E;
   E engine_;
@@ -165,6 +172,7 @@ class Reverb241A2A9 {
   float reverb_time_;
   float diffusion_;
   float lp_;
+  float freeze_wet_gain_;
 
   float lp_decay_1_;
   float lp_decay_2_;
