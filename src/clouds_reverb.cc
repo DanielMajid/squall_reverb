@@ -94,6 +94,10 @@ void _hook_init(uint32_t platform, uint32_t api, uint32_t samplerate)
   s_scan_smoothed = 0.f;
 }
 
+void _hook_resume(void) {}
+
+void _hook_suspend(void) {}
+
 void _hook_process(float* xn, uint32_t frames)
 {
   // Soften hard state changes from the UI for smoother audio transitions.
@@ -106,22 +110,23 @@ void _hook_process(float* xn, uint32_t frames)
   const float base_time = k_time_base + k_time_scale * s_reverb_amount;
   const float base_lp = k_lp_base + k_lp_scale * s_tone;
 
-  // SCAN inversely controls a small freeze leakage margin.
-  // SCAN 100%: 0% leak (tightest hold).
-  // SCAN 0%:   5% leak (slight decay + slight new input).
-  const float freeze_leak = (1.0f - s_scan_smoothed) * k_freeze_leak_max;
-  // Hold controls how much the tail resists decaying.
-  const float freeze_hold = s_freeze_blend * (1.0f - freeze_leak);
-  // Input scale controls how much fresh input can still enter while frozen.
-  const float input_scale =
+    // SCAN is split into two ranges:
+    // - 50% to 100%: fully locked with a full color sweep.
+    // - 50% to 0%: increasing buffer leak and fresh-input bleed.
+    const float scan_lock = clamp01((s_scan_smoothed - 0.5f) * 2.0f);
+    const float scan_leak = clamp01((0.5f - s_scan_smoothed) * 2.0f);
+
+    const float freeze_leak = scan_leak * k_freeze_leak_max;
+    // Hold controls how much the tail resists decaying.
+    const float freeze_hold = s_freeze_blend * (1.0f - freeze_leak);
+    // Input scale controls how much fresh input can still enter while frozen.
+    const float input_scale =
       (1.0f - s_freeze_blend) + (s_freeze_blend * freeze_leak);
 
-  // Scan is shaped around center so small moves near noon feel gentler,
-  // and extreme knob positions are more dramatic.
-  const float scan_bipolar = (s_scan_smoothed * 2.0f - 1.0f);
-  const float scan_shaped = scan_bipolar * scan_bipolar * scan_bipolar;
-  // Scan color is only active when freeze is active.
-  const float scan_amount = scan_shaped * s_freeze_blend;
+    // Push the color range harder so the locked half of SCAN feels more dramatic.
+    const float scan_color = scan_lock * scan_lock * scan_lock;
+    // Scan color is only active when freeze is active.
+    const float scan_amount = scan_color * s_freeze_blend;
 
   // Reverb amount and time are driven by freeze hold, not directly by SCAN.
   const float amount = base_amount + (1.0f - base_amount) * freeze_hold;
@@ -130,15 +135,15 @@ void _hook_process(float* xn, uint32_t frames)
 
   // Normalize the frozen tail with a wet-only gain so freeze does not
   // create a large jump in apparent level.
-  const float freeze_wet_gain = 1.0f - 0.30f * s_freeze_blend;
+  const float freeze_wet_gain = 1.0f - 0.45f * s_freeze_blend;
 
   const float input_gain = k_input_gain_base * input_scale;
   // SCAN colors the frozen texture by moving damping and diffusion.
   float lp = base_lp + (1.0f - base_lp) * freeze_hold;
-  lp += 0.18f * scan_amount;
+  lp += 0.32f * scan_amount;
   lp = clamp01(lp);
 
-  float diffusion = 0.7f + 0.10f * scan_amount;
+  float diffusion = 0.55f + 0.30f * scan_amount;
   diffusion = clamp01(diffusion);
 
   s_processor_instance.set_amount(amount);

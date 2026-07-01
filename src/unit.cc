@@ -35,6 +35,10 @@ void _hook_set_buffer(float* buf);
 namespace {
 
 int32_t s_cached_values[UNIT_REVFX_MAX_PARAM_COUNT] = {};
+uint32_t s_platform = 0;
+uint32_t s_api = 0;
+uint32_t s_samplerate = 0;
+bool s_runtime_context_ready = false;
 
 // Convert SDK dry/wet range [-1000, 1000] into [0, 1023].
 inline int32_t drywet_to_shift_depth(const int32_t drywet) {
@@ -84,6 +88,10 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t *desc) {
   }
 
   // Start DSP state.
+  s_platform = desc->target;
+  s_api = desc->api;
+  s_samplerate = desc->samplerate;
+  s_runtime_context_ready = true;
   _hook_init(desc->target, desc->api, desc->samplerate);
 
   // Push every init value through unit_set_param_value() so startup and
@@ -99,7 +107,17 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t *desc) {
 
 __unit_callback void unit_teardown() {}
 
-__unit_callback void unit_reset() {}
+__unit_callback void unit_reset() {
+  if (!s_runtime_context_ready) {
+    return;
+  }
+
+  _hook_init(s_platform, s_api, s_samplerate);
+
+  for (uint8_t index = 0; index < UNIT_REVFX_MAX_PARAM_COUNT; ++index) {
+    unit_set_param_value(index, s_cached_values[index]);
+  }
+}
 
 __unit_callback void unit_resume() {
   _hook_resume();
