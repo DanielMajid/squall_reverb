@@ -1,6 +1,6 @@
 # Squall Reverb
 
-`Squall` is a Clouds-inspired stereo reverb unit for the Korg NTS-1 mkII.
+`Squall` is a port of Mutable Instruments Clouds reverb for the Korg NTS-1 mkII.
 
 Ported by Daniel Majid Mirzakhani.
 
@@ -8,11 +8,11 @@ Original Clouds DSP copyright Émilie Gillet.
 
 ## Highlights
 
-- Uses DSP from the original Clouds synth module for an accurate emulation.
-- Playable `DPTH` range from short ambience to near-infinite sustain tails.
+- Uses DSP from the original Clouds synth module for an accurate emulation of the onboard reverb.
+- Playable `DPTH` range from short ambience to long dreamy washes.
 - Knob B `DPTH` also controls wet amount to closely emulate the 'one knob' functionality of the original module.
 - `FREEZE` holds the reverb tail and limits fresh input.
-- `SCAN` shapes frozen texture and controls a small freeze leak range (0-5%).
+- `SCAN` from `50%` to `100%` colors the frozen buffer. From `50%` to `100%` leak behavior around the 50% split.
 
 ## Controls
 
@@ -24,16 +24,16 @@ Original Clouds DSP copyright Émilie Gillet.
     - Knob B `>= 50%`: FREEZE on.
     - Existing tail content is held.
 - `SCAN` Freeze behavior shaper.
-    - `100%`: Tightest hold (0% leak) and brightest/most diffuse freeze color.
-    - `0%`: Slight hold leak (up to 5%) and darker/less diffuse freeze color.
+    - `50-100%`: Full clamp closed (no input bleed, no leak-out) with increasing frozen color sweep.
+    - `0-50%`: Allows fresh-input bleed (up to 5%) while leak-out is fixed at only 0.5%.
+    - `0%`: Maximum input bleed and darker/less diffuse freeze color.
 
 
 `DPTH` behavior:
 
 - `0-50%`: Room/hall style reverb.
 - `50-75%`: Longer cathedral-like tail with subtle modulation character.
-- `75-99%`: Very long dreamy tail with more obvious modulation in the decay.
-- `100%`: 'infinite' reverb tail.
+- `75-100%`: Very long dreamy tail with more obvious modulation in the decay.
 
 ## To build this project
 

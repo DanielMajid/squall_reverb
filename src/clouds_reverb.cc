@@ -43,9 +43,17 @@ constexpr float k_input_gain_base = 0.2f;
 // Smoothing avoids zipper noise from abrupt UI parameter moves.
 constexpr float k_freeze_smoothing = 0.04f;
 constexpr float k_scan_smoothing = 0.015f;
-// Maximum leakage while frozen when SCAN is fully counter-clockwise.
-// 0.05 means up to 5% of normal decay/input is allowed.
-constexpr float k_freeze_leak_max = 0.05f;
+// Maximum fresh-input bleed while frozen when SCAN is fully counter-clockwise.
+// 0.05 means up to 5% of normal input is allowed into the frozen tail.
+constexpr float k_freeze_input_bleed_max = 0.05f;
+// Leak-out from the held tail while SCAN is in the lower half.
+// 0.005 means a fixed 0.5% release from the frozen buffer.
+constexpr float k_freeze_leak_out_when_scan_open = 0.005f;
+// Upper-half SCAN (50-100%) color sweep tuning.
+// Keep this restrained to avoid feeding energy back into the tail.
+constexpr float k_scan_lp_sweep = 0.24f;
+constexpr float k_scan_diffusion_base = 0.50f;
+constexpr float k_scan_diffusion_sweep = 0.22f;
 
 static clouds::Reverb241A2A9 s_processor_instance;
 static float* s_reverb_buffer = nullptr;
@@ -116,15 +124,18 @@ void _hook_process(float* xn, uint32_t frames)
     const float scan_lock = clamp01((s_scan_smoothed - 0.5f) * 2.0f);
     const float scan_leak = clamp01((0.5f - s_scan_smoothed) * 2.0f);
 
-    const float freeze_leak = scan_leak * k_freeze_leak_max;
+    const float input_bleed = scan_leak * k_freeze_input_bleed_max;
+    const float freeze_leak_out = scan_leak > 0.0f
+      ? k_freeze_leak_out_when_scan_open
+      : 0.0f;
     // Hold controls how much the tail resists decaying.
-    const float freeze_hold = s_freeze_blend * (1.0f - freeze_leak);
+    const float freeze_hold = s_freeze_blend * (1.0f - freeze_leak_out);
     // Input scale controls how much fresh input can still enter while frozen.
     const float input_scale =
-      (1.0f - s_freeze_blend) + (s_freeze_blend * freeze_leak);
+      (1.0f - s_freeze_blend) + (s_freeze_blend * input_bleed);
 
     // Push the color range harder so the locked half of SCAN feels more dramatic.
-    const float scan_color = scan_lock * scan_lock * scan_lock;
+    const float scan_color = scan_lock * scan_lock * (0.75f + 0.25f * scan_lock);
     // Scan color is only active when freeze is active.
     const float scan_amount = scan_color * s_freeze_blend;
 
@@ -140,10 +151,11 @@ void _hook_process(float* xn, uint32_t frames)
   const float input_gain = k_input_gain_base * input_scale;
   // SCAN colors the frozen texture by moving damping and diffusion.
   float lp = base_lp + (1.0f - base_lp) * freeze_hold;
-  lp += 0.32f * scan_amount;
+  lp += k_scan_lp_sweep * scan_amount;
   lp = clamp01(lp);
 
-  float diffusion = 0.55f + 0.30f * scan_amount;
+  float diffusion = k_scan_diffusion_base + k_scan_diffusion_sweep * scan_amount;
+  diffusion = std::min(diffusion, 0.74f);
   diffusion = clamp01(diffusion);
 
   s_processor_instance.set_amount(amount);
