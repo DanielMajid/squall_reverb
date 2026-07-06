@@ -1,10 +1,8 @@
 #include <algorithm>
-#include <cstdint>
+#include <stdint.h>
 
 #include "unit_revfx.h"
 #include "utils/int_math.h"
-
-extern "C" {
 
 // Parameter IDs forwarded to the DSP bridge.
 enum {
@@ -18,6 +16,8 @@ enum {
 // Extra slots used by this unit beyond the fixed SDK parameters.
 constexpr uint8_t k_unit_revfx_param_freeze_slot = 3;
 constexpr uint8_t k_unit_revfx_param_freeze_scan_slot = 4;
+
+extern "C" {
 
 // DSP bridge hooks implemented in clouds_reverb.cc.
 void _hook_init(uint32_t platform, uint32_t api, uint32_t samplerate);
@@ -39,6 +39,7 @@ uint32_t s_platform = 0;
 uint32_t s_api = 0;
 uint32_t s_samplerate = 0;
 bool s_runtime_context_ready = false;
+bool s_startup_freeze_guard = true;
 
 // Convert SDK dry/wet range [-1000, 1000] into [0, 1023].
 inline int32_t drywet_to_shift_depth(const int32_t drywet) {
@@ -92,6 +93,7 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t *desc) {
   s_api = desc->api;
   s_samplerate = desc->samplerate;
   s_runtime_context_ready = true;
+  s_startup_freeze_guard = true;
   _hook_init(desc->target, desc->api, desc->samplerate);
 
   // Push every init value through unit_set_param_value() so startup and
@@ -128,6 +130,8 @@ __unit_callback void unit_suspend() {
 }
 
 __unit_callback void unit_render(const float* in, float* out, uint32_t frames) {
+  s_startup_freeze_guard = false;
+
   // Copy input to output first, then process in place.
   std::copy(in, in + (frames << 1), out);
   _hook_process(out, frames);
@@ -139,6 +143,9 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value) {
   }
 
   value = clipminmaxi32(unit_header.params[id].min, value, unit_header.params[id].max);
+  if (id == k_unit_revfx_param_freeze_slot && s_startup_freeze_guard) {
+    value = 0;
+  }
   s_cached_values[id] = value;
 
   switch (id) {
