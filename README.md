@@ -12,7 +12,7 @@ Original Clouds DSP copyright Émilie Gillet.
 - Playable `DPTH` range from short ambience to long dreamy washes.
 - Knob B `DPTH` also controls wet amount to closely emulate the 'one knob' functionality of the original module.
 - `FREEZE` holds the reverb tail and limits fresh input.
-- `SCAN` from `50%` to `100%` colors the frozen buffer. From `50%` to `100%` leak behavior around the 50% split.
+- `SCAN` from `50%` to `100%` colors the frozen buffer. From `50%` to `0%` increases buffer leak to allow in new audio.
 
 ## Controls
 
